@@ -1,5 +1,5 @@
 from svm_basic import svm_basic
-from numpy import *
+import numpy as np
 import matplotlib.pyplot as plt
 
 def loadDataSet(fileName):
@@ -20,9 +20,16 @@ plt.savefig("UsingLabels.png")
 clf = svm_basic()
 b, weights = clf.fit(X, Y)
 
-hypotheses = clf.predict(mat(X))
+hypotheses = clf.predict(np.mat(X))
 
 labels = []
+x = np.arange(min([i[0] for i in X]), max([i[0] for i in X]) , 0.5)
+list_x = x.tolist()
+list_x = np.append(list_x, [0, -float(b)/float(weights[1])])
+x = np.array(list_x)
+y = []
+for i in range(0,len(x)):
+    y.append((-float(b) - (float(weights[1]) * list_x[i])) / float(weights[0]))
 
 for i in range(0,len(hypotheses)):
     if hypotheses[i] >= 0 :
@@ -30,5 +37,8 @@ for i in range(0,len(hypotheses)):
     else:
         labels.append(-1)
 
-plt.scatter([i[0] for i in X], [i[1] for i in X], c=labels, alpha=0.5)
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.scatter([i[0] for i in X], [i[1] for i in X], c=labels, alpha=0.5)
+ax.plot(x, np.array(y))
 plt.savefig("UsingPredictions.png")
